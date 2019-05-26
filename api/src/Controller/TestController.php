@@ -14,10 +14,8 @@ class TestController extends AbstractController
     public function index()
     {
         $data = [
-            [
-                'id' => 1,
-                'name' => 'test'
-            ]
+            'id' => 1,
+            'name' => 'test'
         ];
 
         return new JsonResponse($data);

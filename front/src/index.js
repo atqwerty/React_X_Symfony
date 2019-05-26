@@ -10,8 +10,7 @@ class Test extends React.Component {
         super(props);
 
         this.state = {
-            id: 10,
-            name: 'aaaaaaaaaaaaaaa'
+            data: null,
         }
 
         // this.test = this.test.bind(this);
@@ -20,10 +19,8 @@ class Test extends React.Component {
     test = () => {
         axios.get('http://localhost:8000/test')
         .then(response => {
-            console.log(response.data);
             this.setState({
-                id: response.data.id,
-                name: response.data.name,
+                data: response.data
             });
         })
         .catch(error => {
@@ -34,8 +31,8 @@ class Test extends React.Component {
     render() {
         return (
             <div>
-                <h1>{ this.state.id }</h1>
-                <h1>{ this.state.name }</h1>
+                <h1>{ this.state.data }</h1>
+                {/* <h1>{ this.state.name }</h1> */}
                 <button onClick = { this.test }>click</button>
             </div>
         );

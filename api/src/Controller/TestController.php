@@ -1,10 +1,12 @@
 <?php
 
 namespace App\Controller;
+header("Access-Control-Allow-Origin: *");
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Group;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -12,23 +14,43 @@ class TestController extends AbstractController
 {
     
     /**
-     * @Route("/test", name="test")
+     * @Route("/add", name="add")
+     * @Route("/add", name="add", methods={"POST", "OPTIONS"})
      */
-    public function index()
+    public function post(Request $request)
     {
+        $data = json_decode($request->getContent());
         $entityManager = $this->getDoctrine()->getManager();
 
-        // $group = new Group();
-        // $group->setName("Test2");
-
-        $sql = "INSERT INTO test.group (name) VALUES ('test');";
+        $sql = "INSERT INTO test.group (name) VALUES ('" . $data->name . "');";
 
         $stmt = $entityManager->getConnection()->prepare($sql);
         $stmt->execute();
-        // $entityManager->persist($group);
-        // $entityManager->flush();
 
-        return new JsonResponse('Done');
+        return new JsonResponse("ok");
+    }
+
+   /**
+    * @Route("/get_data", name="get_data")
+    */
+    public function getData()
+    {
+        $output = [];
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $sql = "SELECT name FROM test.group";
+
+        $stmt = $entityManager->getConnection()->prepare($sql);
+        $stmt->execute();
+        $results = $stmt->fetchAll();
+
+        foreach($results as $task)
+        {
+            array_push($output, $task['name']);
+        }
+        
+        return new JsonResponse($output);
+        
     }
 
 }

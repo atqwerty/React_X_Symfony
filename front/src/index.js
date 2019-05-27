@@ -10,30 +10,75 @@ class Test extends React.Component {
         super(props);
 
         this.state = {
-            data: null,
+            tasks: [],
+            item_input: ''
         }
 
         // this.test = this.test.bind(this);
     }
 
-    test = () => {
-        axios.get('http://localhost:8000/test')
+    componentDidMount = () => {
+        axios.get('http://localhost:8000/get_data')
         .then(response => {
             this.setState({
-                data: response.data
-            });
+                tasks: response.data
+            })
         })
         .catch(error => {
             console.log(error);
+        })
+    }
+
+    add = () => {
+        if(this.state.item_input !== '') {
+            let task = JSON.stringify({
+                name: this.state.item_input,
+            })
+            axios.post('http://localhost:8000/add', task, {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => {
+                console.log(response);
+            })
+            .catch(error => {
+                console.log(error);
+            })
+        } else {
+            console.log("input is empty");
+        }
+    }
+
+    update = (event) => {
+        this.setState({
+            item_input: event.target.value,
         });
     }
 
     render() {
         return (
             <div>
-                <h1>{ this.state.data }</h1>
-                {/* <h1>{ this.state.name }</h1> */}
-                <button onClick = { this.test }>click</button>
+                <ul>
+                    {
+                        this.state.tasks.map((item, i) => (
+                            <li key = {i}>
+                                { item }
+                                { ' ' }
+                            </li>
+                        ))
+                    }
+                </ul>
+                <input 
+                    type = "text" 
+                    value = { this.state.item_input }
+                    onChange = { this.update }
+                />
+                <input 
+                    type = "button" 
+                    value = "click" 
+                    onClick = { this.add } 
+                />
             </div>
         );
     }

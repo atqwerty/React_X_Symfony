@@ -12,24 +12,21 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class TestController extends AbstractController
 {
-    
     /**
-     * @Route("/add", name="add")
      * @Route("/add", name="add", methods={"POST", "OPTIONS"})
      */
     public function post(Request $request)
     {
         $data = json_decode($request->getContent());
-        $entityManager = $this->getDoctrine()->getManager();
 
         $sql = "INSERT INTO test.group (name) VALUES ('" . $data->name . "');";
-        $sql2 = "SELECT LAST_INSERT_ID();";
+        $sql2 = "SELECT LAST_INSERT_ID();"; // Get last added item id in order to render it in index.js
 
-        $stmt = $entityManager->getConnection()->prepare($sql);
-        $stmt->execute();
+        // Execute first query
+        $this->queryPrep($sql);
         
-        $stmt = $entityManager->getConnection()->prepare($sql2);
-        $stmt->execute();
+        // Execute second query anf obtain the result
+        $stmt = $this->queryPrep($sql2);
         $result = $stmt->fetchAll();
 
         return new JsonResponse($result);
@@ -41,12 +38,11 @@ class TestController extends AbstractController
     public function getData()
     {
         $output = [];
-        $entityManager = $this->getDoctrine()->getManager();
 
         $sql = "SELECT * FROM test.group";
 
-        $stmt = $entityManager->getConnection()->prepare($sql);
-        $stmt->execute();
+        // Put queryPrep() output in $stmt in order to pass it to index.js
+        $stmt = $this->queryPrep($sql);
         $results = $stmt->fetchAll();
 
         foreach($results as $task)
@@ -54,8 +50,7 @@ class TestController extends AbstractController
             array_push($output, $task);
         }
         
-        return new JsonResponse($output);
-        
+        return new JsonResponse($output);    
     }
 
    /**
@@ -65,13 +60,21 @@ class TestController extends AbstractController
     {
         $key = json_decode($request->getContent());
 
-        $entityManager = $this->getDoctrine()->getManager();
-
         $sql = "DELETE FROM test.group WHERE id = '". $key->id ."';";
-        $stmt = $entityManager->getConnection()->prepare($sql);
-        $stmt->execute();
+
+        // No need to obtain the output
+        $this->queryPrep();
 
         return new JsonResponse($key->id);
     }
-    
+
+    // Sums up the basic operations in order to execute query
+    function queryPrep($sql){
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $stmt = $entityManager->getConnection()->prepare($sql);
+        $stmt->execute();
+
+        return $stmt;
+    }
 }

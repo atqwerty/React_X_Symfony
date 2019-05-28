@@ -67,11 +67,11 @@ class TestController extends AbstractController
 
         $entityManager = $this->getDoctrine()->getManager();
 
-        $sql = "DELETE FROM test.group WHERE id = '". $key->key ."';";
-        // $stmt = $entityManager->getConnection()->prepare($sql);
-        // $stmt->execute();
+        $sql = "DELETE FROM test.group WHERE id = '". $key->id ."';";
+        $stmt = $entityManager->getConnection()->prepare($sql);
+        $stmt->execute();
 
-        return new JsonResponse($key->key);
+        return new JsonResponse($key->id);
     }
     
 }

@@ -13,17 +13,14 @@ class Test extends React.Component {
             tasks: [],
             item_input: ''
         }
-
     }
 
     componentDidMount = () => {
         axios.get('http://localhost:8000/get_data')
         .then(response => {
-
             this.setState({
                 tasks: response.data,
             });
-            
         })
         .catch(error => {
             console.log(error);
@@ -32,7 +29,6 @@ class Test extends React.Component {
 
     add = () => {
         if(this.state.item_input !== '') {
-
             let task = JSON.stringify({
                 name: this.state.item_input,
             })
@@ -43,7 +39,6 @@ class Test extends React.Component {
                 }
             })
             .then(response => {
-
                 let new_item = { id: response.data, name: this.state.item_input };
 
                 this.setState(prev => {
@@ -52,7 +47,6 @@ class Test extends React.Component {
                         tasks: prev.tasks.concat(new_item),
                     };
                 });
-
             })
             .catch(error => {
                 console.log(error);
@@ -62,10 +56,9 @@ class Test extends React.Component {
         }
     }
 
-    remove = (key) => {
-
+    remove = (id, key) => {
         let data = JSON.stringify({
-            key: ++key,
+            id: id,
         })
 
         axios.delete('http://localhost:8000/delete_task', { data: data }, {
@@ -74,7 +67,7 @@ class Test extends React.Component {
             }
         })
         .then(response => {
-        
+            console.log(response);
             this.setState(prev => {
                 let tasks = [...prev.tasks]
 
@@ -85,7 +78,6 @@ class Test extends React.Component {
                     tasks
                 };
             });
-
         })
         .catch(error => {
             console.log(error);
@@ -93,11 +85,9 @@ class Test extends React.Component {
     }
 
     update = (event) => {
-
         this.setState({
             item_input: event.target.value,
         });
-
     }
 
     render() {
@@ -112,7 +102,7 @@ class Test extends React.Component {
                                 <input
                                     type = "button"
                                     value = "delete"
-                                    onClick = { () => this.remove(item.id) }
+                                    onClick = { () => this.remove(item.id, i) }
                                 />
                             </li>
                         ))
@@ -125,13 +115,12 @@ class Test extends React.Component {
                 />
                 <input 
                     type = "button" 
-                    value = "click" 
+                    value = "add item" 
                     onClick = { this.add } 
                 />
             </div>
         );
     }
-
 }
 
 ReactDOM.render(<Test />, document.getElementById('root'));

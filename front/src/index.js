@@ -15,6 +15,7 @@ class Test extends React.Component {
         }
     }
 
+    // Onload function (GET all tasks)
     componentDidMount = () => {
         axios.get('http://localhost:8000/get_data')
         .then(response => {
@@ -39,6 +40,7 @@ class Test extends React.Component {
                 }
             })
             .then(response => {
+                // Wrap new item in order to render it
                 let new_item = { id: response.data, name: this.state.item_input };
 
                 this.setState(prev => {
@@ -93,6 +95,7 @@ class Test extends React.Component {
     render() {
         return (
             <div>
+                {/* List of tasks */}
                 <ul>
                     {
                         this.state.tasks.map((item, i) => (
@@ -108,6 +111,7 @@ class Test extends React.Component {
                         ))
                     }
                 </ul>
+                {/* Task creation form */}
                 <input 
                     type = "text" 
                     value = { this.state.item_input }

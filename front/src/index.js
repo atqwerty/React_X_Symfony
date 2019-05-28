@@ -14,15 +14,16 @@ class Test extends React.Component {
             item_input: ''
         }
 
-        // this.test = this.test.bind(this);
     }
 
     componentDidMount = () => {
         axios.get('http://localhost:8000/get_data')
         .then(response => {
+
             this.setState({
-                tasks: response.data
-            })
+                tasks: response.data,
+            });
+            
         })
         .catch(error => {
             console.log(error);
@@ -31,16 +32,27 @@ class Test extends React.Component {
 
     add = () => {
         if(this.state.item_input !== '') {
+
             let task = JSON.stringify({
                 name: this.state.item_input,
             })
+
             axios.post('http://localhost:8000/add', task, {
                 headers: {
                     'Content-Type': 'application/json',
                 }
             })
             .then(response => {
-                console.log(response);
+
+                let new_item = { id: response.data, name: this.state.item_input };
+
+                this.setState(prev => {
+                    return{
+                        item_input: '',
+                        tasks: prev.tasks.concat(new_item),
+                    };
+                });
+
             })
             .catch(error => {
                 console.log(error);
@@ -50,10 +62,42 @@ class Test extends React.Component {
         }
     }
 
+    remove = (key) => {
+
+        let data = JSON.stringify({
+            key: ++key,
+        })
+
+        axios.delete('http://localhost:8000/delete_task', { data: data }, {
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => {
+        
+            this.setState(prev => {
+                let tasks = [...prev.tasks]
+
+                tasks.splice(key, 1);
+
+                return {
+                    item_input: '',
+                    tasks
+                };
+            });
+
+        })
+        .catch(error => {
+            console.log(error);
+        })
+    }
+
     update = (event) => {
+
         this.setState({
             item_input: event.target.value,
         });
+
     }
 
     render() {
@@ -63,8 +107,13 @@ class Test extends React.Component {
                     {
                         this.state.tasks.map((item, i) => (
                             <li key = {i}>
-                                { item }
+                                { item.name }
                                 { ' ' }
+                                <input
+                                    type = "button"
+                                    value = "delete"
+                                    onClick = { () => this.remove(item.id) }
+                                />
                             </li>
                         ))
                     }

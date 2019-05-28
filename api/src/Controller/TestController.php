@@ -23,22 +23,27 @@ class TestController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
 
         $sql = "INSERT INTO test.group (name) VALUES ('" . $data->name . "');";
+        $sql2 = "SELECT LAST_INSERT_ID();";
 
         $stmt = $entityManager->getConnection()->prepare($sql);
         $stmt->execute();
+        
+        $stmt = $entityManager->getConnection()->prepare($sql2);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
 
-        return new JsonResponse("ok");
+        return new JsonResponse($result);
     }
 
    /**
-    * @Route("/get_data", name="get_data")
+    * @Route("/get_data", name="get_data", methods={"GET"})
     */
     public function getData()
     {
         $output = [];
         $entityManager = $this->getDoctrine()->getManager();
 
-        $sql = "SELECT name FROM test.group";
+        $sql = "SELECT * FROM test.group";
 
         $stmt = $entityManager->getConnection()->prepare($sql);
         $stmt->execute();
@@ -46,11 +51,27 @@ class TestController extends AbstractController
 
         foreach($results as $task)
         {
-            array_push($output, $task['name']);
+            array_push($output, $task);
         }
         
         return new JsonResponse($output);
         
     }
 
+   /**
+    * @Route("/delete_task", name="delete_task")
+    */
+    public function deleteTask(Request $request)
+    {
+        $key = json_decode($request->getContent());
+
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $sql = "DELETE FROM test.group WHERE id = '". $key->key ."';";
+        // $stmt = $entityManager->getConnection()->prepare($sql);
+        // $stmt->execute();
+
+        return new JsonResponse($key->key);
+    }
+    
 }

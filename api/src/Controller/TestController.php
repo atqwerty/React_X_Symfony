@@ -60,10 +60,10 @@ class TestController extends AbstractController
     {
         $key = json_decode($request->getContent());
 
-        // $sql = "DELETE FROM test.group WHERE id = ". $key->id .";";
+        $sql = "DELETE FROM test.group WHERE id = ". $key->id .";";
 
         // No need to obtain the output
-        // $this->queryPrep($sql);
+        $this->queryPrep($sql);
 
         return new JsonResponse($key->id);
     }

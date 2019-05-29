@@ -99,7 +99,7 @@ class Test extends React.Component {
                 <ul>
                     {
                         this.state.tasks.map((item, i) => (
-                            <li key = {i}>
+                            <li key = {i} class = "test">
                                 { item.name }
                                 { ' ' }
                                 <input

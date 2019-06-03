@@ -94,12 +94,15 @@ class Test extends React.Component {
 
     render() {
         return (
-            <div>
+            <div id = "content">
+                <h2 id = "logo">
+                    To Do List
+                </h2>
                 {/* List of tasks */}
-                <ul>
+                <ul id = "task_list">
                     {
                         this.state.tasks.map((item, i) => (
-                            <li key = {i} class = "test">
+                            <li key = {i} className = "task">
                                 { item.name }
                                 { ' ' }
                                 <input

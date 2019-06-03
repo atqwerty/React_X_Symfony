@@ -11,6 +11,26 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
-.test {
-  width: 200%;
+#content{
+  width: 50%;
+  background-color: cyan;
+  margin-left: 25%;
+  text-align: center;
+  overflow: hidden;
+  border-radius: 5px;
+  box-shadow: 2px 2px 4px grey;
+}
+#logo{
+  width: 30%;
+  margin-top: 10%;
+}
+#task_list{
+  width: 100%;
+  text-align: center;
+}
+ul{
+  list-style: none;
+}
+.task {
+  /* width: 50%; */
 }
